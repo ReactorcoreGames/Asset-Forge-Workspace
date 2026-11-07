@@ -1,0 +1,23 @@
+# disk_05sided: standardised by forge/import_collection.py
+mtllib RC_Primitives.mtl
+o disk_05sided
+v 0 0 0
+v 0 0 -0.5
+v -0.475529 0 -0.154508
+v -0.293893 0 0.404508
+v 0.293893 0 0.404508
+v 0.475528 0 -0.154508
+vt 0.5 0.447214
+vt 0.5 1
+vt 0 0.618034
+vt 0.190983 0
+vt 0.809017 0
+vt 1 0.618034
+vn 0 1 0
+usemtl base
+s off
+f 1/1/1 2/2/1 3/3/1
+f 1/1/1 3/3/1 4/4/1
+f 1/1/1 4/4/1 5/5/1
+f 1/1/1 5/5/1 6/6/1
+f 1/1/1 6/6/1 2/2/1

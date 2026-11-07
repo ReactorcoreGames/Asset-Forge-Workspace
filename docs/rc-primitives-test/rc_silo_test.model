@@ -1,0 +1,27 @@
+# Made using Asset Forge (2.5.3)
+
+:materials
+
+[name:rock;color:RGBA(0.541, 0.482, 0.416, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0;valueB:0.25;]
+[name:grass;color:RGBA(0.420, 0.686, 0.294, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0;valueB:0.25;]
+[name:concrete;color:RGBA(0.663, 0.663, 0.643, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0;valueB:0.25;]
+[name:paint;color:RGBA(0.847, 0.824, 0.753, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0;valueB:0.25;]
+[name:trim;color:RGBA(0.761, 0.271, 0.176, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.3;valueB:0.5;]
+[name:dark;color:RGBA(0.180, 0.192, 0.220, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0;valueB:0.25;]
+[name:glow;color:RGBA(1.000, 0.827, 0.353, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0;valueB:0.25;]
+
+:models
+
+[name:;collection:RC_Primitives;type:hill_10;position:(0.0000, 0.0000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(5.0000, 0.6000, 5.0000);group:ground;locked:False;hidden:False;materials:rock+grass;]
+[name:;collection:Primitives;type:block_bevel;position:(0.0000, 0.3000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(2.4000, 0.3000, 2.4000);group:;locked:False;hidden:False;materials:concrete;]
+[name:;collection:Primitives;type:wedge;position:(0.0000, 0.1200, 1.7500);rotation:(0.0000, 0.0000, 0.0000);scale:(0.8000, 0.4800, 1.1000);group:;locked:False;hidden:False;materials:concrete;]
+[name:;collection:RC_Primitives;type:barrel_16sided;position:(0.0000, 0.6000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.6000, 2.0000, 1.6000);group:tank;locked:False;hidden:False;materials:paint;]
+[name:;collection:RC_Primitives;type:torus;position:(0.0000, 1.4000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.7200, 1.0000, 1.7200);group:tank;locked:False;hidden:False;materials:trim;]
+[name:;collection:RC_Primitives;type:dome_doublesided;position:(0.0000, 2.6000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.6000, 1.2000, 1.6000);group:tank;locked:False;hidden:False;materials:trim+dark;]
+[name:;collection:Primitives;type:block;position:(0.0000, 0.6000, 0.7600);rotation:(0.0000, 0.0000, 0.0000);scale:(0.4500, 0.7500, 0.1000);group:tank;locked:False;hidden:False;materials:dark;]
+[name:;collection:Primitives;type:cylinder;position:(0.0000, 3.2000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.0800, 0.9000, 0.0800);group:antenna;locked:False;hidden:False;materials:dark;]
+[name:;collection:RC_Primitives;type:icosphere_0080;position:(0.0000, 4.0500, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.2200, 0.2200, 0.2200);group:antenna;locked:False;hidden:False;materials:glow;]
+[name:;collection:RC_Primitives;type:cone_08sided;position:(-0.9500, 0.6000, -0.9500);rotation:(0.0000, 0.0000, 0.0000);scale:(0.2500, 0.5000, 0.2500);group:;locked:False;hidden:False;materials:trim;]
+[name:;collection:RC_Primitives;type:cone_08sided;position:(-0.9500, 0.6000, 0.9500);rotation:(0.0000, 0.0000, 0.0000);scale:(0.2500, 0.5000, 0.2500);group:;locked:False;hidden:False;materials:trim;]
+[name:;collection:RC_Primitives;type:cone_08sided;position:(0.9500, 0.6000, -0.9500);rotation:(0.0000, 0.0000, 0.0000);scale:(0.2500, 0.5000, 0.2500);group:;locked:False;hidden:False;materials:trim;]
+[name:;collection:RC_Primitives;type:cone_08sided;position:(0.9500, 0.6000, 0.9500);rotation:(0.0000, 0.0000, 0.0000);scale:(0.2500, 0.5000, 0.2500);group:;locked:False;hidden:False;materials:trim;]

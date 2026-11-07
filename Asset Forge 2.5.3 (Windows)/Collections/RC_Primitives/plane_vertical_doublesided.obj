@@ -1,0 +1,25 @@
+# plane_vertical_doublesided: standardised by forge/import_collection.py
+mtllib RC_Primitives.mtl
+o plane_vertical_doublesided
+v -0.5 0 0
+v 0.5 0 0
+v -0.5 1 0
+v 0.5 1 0
+v 0.5 0 0
+v -0.5 0 0
+v 0.5 1 0
+v -0.5 1 0
+vt 0 0
+vt 1 0
+vt 1 1
+vt 0 1
+vn 0 0 -1
+vn 0 0 1
+usemtl base
+s off
+f 6/1/2 5/2/2 7/3/2
+f 8/4/2 6/1/2 7/3/2
+usemtl inner
+s off
+f 2/1/1 1/2/1 3/3/1
+f 4/4/1 2/1/1 3/3/1

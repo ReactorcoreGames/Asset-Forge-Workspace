@@ -1,0 +1,40 @@
+# Asset Forge is a commercial app that must not be shared. Everyone installs their own copy here.
+# Only Reactorcore's own packs inside it are committed (allow-list below).
+/Asset Forge 2.5.3 (Windows)/*
+!/Asset Forge 2.5.3 (Windows)/Collections/
+/Asset Forge 2.5.3 (Windows)/Collections/*
+!/Asset Forge 2.5.3 (Windows)/Collections/RC_Primitives/
+!/Asset Forge 2.5.3 (Windows)/Textures/
+/Asset Forge 2.5.3 (Windows)/Textures/*
+!/Asset Forge 2.5.3 (Windows)/Textures/32px Microart/
+!/Asset Forge 2.5.3 (Windows)/Textures/128px SurfaceTex/
+
+# Generated from the app and your collections (Library/ holds extracted app meshes: never publish)
+/Library/
+/Catalogue/
+/Textures/normalized/
+
+# Work in progress, deliveries and history: local only
+/Workbench/
+/Assets/
+/Archive/
+/WorkOrders/*
+!/WorkOrders/TEMPLATE.md
+!/WorkOrders/order-form.html
+old wip/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# Claude Code: the skill is part of the project, local settings are not
+.claude/*
+!.claude/skills/
+
+# Editors and OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

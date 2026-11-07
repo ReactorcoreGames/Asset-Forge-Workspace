@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Work Order Form</title>
+<style>
+:root {
+  --bg: #f4f4f1; --panel: #ffffff; --ink: #1d1f24; --muted: #646a75; --line: #d9dbe0;
+  --accent: #2f5db8; --accent-ink: #ffffff; --warn: #a3520b; --warn-bg: #fff3e3; --code: #f0f1f4;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17181c; --panel: #212329; --ink: #e8e9ec; --muted: #9aa0ab; --line: #363942;
+    --accent: #7aa2f0; --accent-ink: #0f1115; --warn: #f0b36a; --warn-bg: #3a2a17; --code: #1a1c21;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17181c; --panel: #212329; --ink: #e8e9ec; --muted: #9aa0ab; --line: #363942;
+  --accent: #7aa2f0; --accent-ink: #0f1115; --warn: #f0b36a; --warn-bg: #3a2a17; --code: #1a1c21;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { padding: 18px 16px 6px; max-width: 1400px; margin: 0 auto; }
+header h1 { margin: 0; font-size: 20px; }
+header p { margin: 4px 0 0; color: var(--muted); }
+main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; padding: 12px 16px 40px; max-width: 1400px; margin: 0 auto; }
+@media (max-width: 960px) { main { grid-template-columns: minmax(0, 1fr); } }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+section h2 { margin: 0 0 10px; font-size: 15px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px 14px; }
+label.f { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); }
+input[type=text], input[type=number], select, textarea {
+  font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; width: 100%;
+}
+textarea { resize: vertical; min-height: 34px; }
+.checks { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.checks label { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; color: var(--ink); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+button { font: inherit; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button:hover { filter: brightness(1.08); }
+.item { border: 1px solid var(--line); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+.item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; color: var(--muted); font-size: 12px; }
+.item-grid { display: grid; grid-template-columns: 2fr 0.7fr 1.6fr; gap: 8px; }
+.item-grid .wide { grid-column: 1 / -1; }
+@media (max-width: 560px) { .item-grid { grid-template-columns: 1fr; } }
+.tools button { padding: 2px 7px; font-size: 12px; }
+pre { background: var(--code); border: 1px solid var(--line); border-radius: 6px; padding: 10px; overflow: auto; max-height: 420px; font: 12px/1.4 ui-monospace, Consolas, monospace; white-space: pre; margin: 6px 0 0; }
+.warn { background: var(--warn-bg); color: var(--warn); border-radius: 6px; padding: 6px 10px; margin: 6px 0; font-size: 13px; }
+.hint { color: var(--muted); font-size: 12px; margin: 4px 0 8px; }
+.out-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stat { color: var(--muted); font-size: 12px; }
+.tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+.tabs button[aria-selected=true] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.dis { opacity: 0.45; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Asset Forge work order</h1>
+  <p>Fill in the defaults once (they are remembered in this browser), list the items, then copy the order into <code>WorkOrders/&lt;project&gt;.md</code> and paste the prompt into Claude.</p>
+</header>
+<main>
+<div>
+  <section>
+    <h2>Global defaults</h2>
+    <div class="grid">
+      <label class="f">Project name (folder-safe)
+        <input type="text" id="project" placeholder="desert-convoy"></label>
+      <label class="f">Engine / facing
+        <select id="engine">
+          <option value="godot">Godot (front faces -Z)</option>
+          <option value="threejs">three.js (front faces +Z)</option>
+          <option value="other">Other</option>
+        </select></label>
+      <label class="f" id="facingWrap">Facing (other engines)
+        <select id="facing"><option value="-z">-z (Godot / glTF default)</option><option value="+z">+z (three.js lookAt)</option></select></label>
+      <label class="f">Surface
+        <select id="surface">
+          <option value="flat">Flat colours</option>
+          <option value="m32">32px Microart + tint</option>
+          <option value="s128">128px SurfaceTex + tint</option>
+        </select></label>
+      <label class="f" id="textureWrap">Texture category
+        <select id="texture">
+          <option value="natural">natural (rock, dirt, grass, bark)</option>
+          <option value="built">built (bricks, tiles, planks, plates)</option>
+          <option value="abstract">abstract (fabric, checkers, camo)</option>
+          <option value="random">random</option>
+        </select></label>
+      <label class="f">Detail level
+        <select id="detail"><option value="broad">Broad strokes (mass-producible)</option><option value="hero">Hero (polished)</option></select></label>
+    </div>
+    <label class="f" style="margin-top:10px">Palette (a vibe and/or hex codes)
+      <input type="text" id="palette" placeholder="desert military | #C2A878 #5A5F3C #3B3F2A"></label>
+    <div class="row" style="margin-top:10px">
+      <label class="checks"><label><input type="checkbox" id="glb"> GLB per asset</label></label>
+      <label class="checks"><label><input type="checkbox" id="sprites"> Pixel sprites</label></label>
+    </div>
+    <div id="spriteBox" style="margin-top:8px">
+      <div class="hint">Sprite views (right = side-scroller facing right, top = front points up the screen)</div>
+      <div class="checks" id="views"></div>
+      <div class="grid" style="margin-top:8px">
+        <label class="f">Canvas size (px, any; 32–128 is the pixel-art sweet spot)
+          <input type="number" id="spriteSize" min="8" max="1024" step="1" list="sizes"></label>
+        <datalist id="sizes"><option value="32"><option value="48"><option value="64"><option value="96"><option value="128"></datalist>
+        <label class="f">Outline
+          <select id="outline"><option value="dark">dark (darkened edge colour)</option><option value="black">black</option><option value="none">none</option></select></label>
+        <label class="f">Consistent scale across the set
+          <select id="sameScale"><option value="yes">yes (same pixels per unit)</option><option value="no">no (each sprite fills its canvas)</option></select></label>
+        <label class="f">Rotations per view
+          <select id="rotations"><option value="1">1 (just the view)</option><option value="4">4 directions</option><option value="8">8 directions</option><option value="16">16 directions</option></select></label>
+      </div>
+    </div>
+    <label class="f" style="margin-top:10px">Order notes (anything that applies to every item)
+      <textarea id="orderNotes" rows="2" placeholder="e.g. all vehicles share one faction colour; keep under 3k tris each"></textarea></label>
+  </section>
+
+  <section>
+    <div class="out-head"><h2>Items</h2><span class="stat" id="itemStat"></span></div>
+    <div class="tabs" role="tablist">
+      <button type="button" id="routeA" role="tab">Route A: reference images</button>
+      <button type="button" id="routeB" role="tab">Route B: written list</button>
+    </div>
+    <div class="hint" id="routeHint"></div>
+    <div id="importBox">
+      <label class="f">Add items from image filenames (one per line; files go in <code id="refsPath">WorkOrders/&lt;project&gt;/refs/</code>)
+        <textarea id="filenames" rows="3" placeholder="scout_buggy.jpg&#10;heavy_tank.png"></textarea></label>
+      <div class="row" style="margin:6px 0 12px"><button type="button" id="importBtn">Add these as items</button></div>
+    </div>
+    <div id="items"></div>
+    <div class="row">
+      <button type="button" class="primary" id="addItem">+ Add item</button>
+      <button type="button" id="clearItems">Clear items</button>
+      <button type="button" id="resetAll">Reset everything</button>
+    </div>
+  </section>
+</div>
+
+<div>
+  <section>
+    <div class="out-head"><h2>1. Order file</h2>
+      <div class="row"><button type="button" class="primary" data-copy="orderOut">Copy</button><button type="button" id="downloadMd">Download .md</button></div></div>
+    <div class="hint">Save as <code id="orderPath">WorkOrders/&lt;project&gt;.md</code>. You can edit it by hand afterwards.</div>
+    <div id="warnings"></div>
+    <pre id="orderOut"></pre>
+  </section>
+  <section>
+    <div class="out-head"><h2>2. Item snippets</h2><button type="button" data-copy="snippetOut">Copy</button></div>
+    <div class="hint">For Route B: paste these blocks into any existing <code>.md</code>/<code>.txt</code> list (under its <code>order</code> header block). They parse the same as table rows.</div>
+    <pre id="snippetOut"></pre>
+  </section>
+  <section>
+    <div class="out-head"><h2>3. Prompt for Claude</h2><button type="button" class="primary" data-copy="promptOut">Copy</button></div>
+    <pre id="promptOut" style="white-space:pre-wrap"></pre>
+  </section>
+</div>
+</main>
+
+<script id="logic">
+// Pure generation logic (no DOM). Tested from Node by extracting this block.
+const OrderLogic = (() => {
+  const VIEWS = ["right", "left", "front", "back", "top", "iso", "iso_left", "iso_back", "dimetric", "trueiso", "high"];
+  const BIG_ORDER = 25;
+
+  function defaults() {
+    return {
+      project: "", engine: "godot", facing: "-z", surface: "flat", texture: "random", detail: "broad",
+      palette: "", glb: true, sprites: false, views: ["right"], spriteSize: 64, outline: "dark",
+      sameScale: "yes", rotations: "1", orderNotes: "", route: "B", items: [blankItem()],
+    };
+  }
+
+  function blankItem() { return { name: "", desc: "", qty: 1, ref: "", notes: "" }; }
+
+  function slug(s) {
+    return String(s || "").trim().toLowerCase().replace(/\.(png|jpe?g|webp|gif|bmp)$/, "")
+      .replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+  }
+
+  function projectSlug(s) { return slug(s).replace(/_/g, "-"); }
+
+  // Keep single-line values: table cells and key: value lines cannot hold newlines or pipes.
+  function clean(s) { return String(s == null ? "" : s).replace(/\s*\n\s*/g, " ").replace(/\|/g, "/").trim(); }
+
+  function facingOf(st) { return st.engine === "godot" ? "-z" : st.engine === "threejs" ? "+z" : st.facing; }
+
+  function qtyOf(it) { const n = parseInt(it.qty, 10); return Number.isFinite(n) && n > 0 ? n : 1; }
+
+  function usedItems(st) { return st.items.filter(it => clean(it.name) || clean(it.desc) || clean(it.ref)); }
+
+  // refs are bare filenames inside the refs folder, so drop any pasted directory part
+  function refOf(it) { return clean(it.ref).replace(/^.*[\\/]/, ""); }
+
+  function itemName(it, i) { return slug(it.name) || slug(refOf(it)) || `item_${i + 1}`; }
+
+  function totals(st) {
+    const items = usedItems(st);
+    return { items: items.length, models: items.reduce((a, it) => a + qtyOf(it), 0) };
+  }
+
+  function headerBlock(st) {
+    const p = projectSlug(st.project) || "untitled";
+    const lines = [
+      `project: ${p}`,
+      `route: ${st.route === "A" ? "A (reference image per item)" : "B (written list)"}`,
+      `engine: ${st.engine}`,
+      `facing: ${facingOf(st)}`,
+      `surface: ${st.surface}`,
+      `texture: ${st.surface === "flat" ? "none" : st.texture}`,
+      `palette: ${clean(st.palette) || "free choice"}`,
+      `glb: ${st.glb ? "yes" : "no"}`,
+      `sprites: ${st.sprites ? "yes" : "no"}`,
+    ];
+    if (st.sprites) {
+      lines.push(
+        `sprite_views: ${(st.views.length ? st.views : ["right"]).join(", ")}`,
+        `sprite_size: ${parseInt(st.spriteSize, 10) || 64}`,
+        `sprite_outline: ${st.outline}`,
+        `sprite_same_scale: ${st.sameScale}`,
+        `sprite_rotations: ${st.rotations}`,
+      );
+    }
+    lines.push(`detail: ${st.detail}`, `refs: WorkOrders/${p}/refs/`);
+    if (clean(st.orderNotes)) lines.push(`notes: ${clean(st.orderNotes)}`);
+    return "```order\n" + lines.join("\n") + "\n```";
+  }
+
+  function itemTable(st) {
+    const rows = ["| # | name | description | qty | ref | notes |", "|---|---|---|---|---|---|"];
+    usedItems(st).forEach((it, i) => {
+      rows.push(`| ${i + 1} | ${itemName(it, i)} | ${clean(it.desc)} | ${qtyOf(it)} | ${refOf(it)} | ${clean(it.notes)} |`);
+    });
+    return rows.join("\n");
+  }
+
+  function orderMarkdown(st) {
+    const p = projectSlug(st.project) || "untitled";
+    const t = totals(st);
+    return [
+      `# Work order: ${p}`, "",
+      "Generated by `WorkOrders/order-form.html`. Format: see `WorkOrders/TEMPLATE.md`.", "",
+      headerBlock(st), "",
+      `## Items (${t.items} items, ${t.models} models)`, "",
+      itemTable(st), "",
+    ].join("\n");
+  }
+
+  function snippets(st) {
+    return usedItems(st).map((it, i) => {
+      const lines = [`- item: ${itemName(it, i)}`, `  desc: ${clean(it.desc)}`, `  qty: ${qtyOf(it)}`];
+      if (refOf(it)) lines.push(`  ref: ${refOf(it)}`);
+      if (clean(it.notes)) lines.push(`  notes: ${clean(it.notes)}`);
+      return lines.join("\n");
+    }).join("\n\n");
+  }
+
+  function prompt(st) {
+    const p = projectSlug(st.project) || "untitled";
+    const t = totals(st);
+    let s = `Use the asset-forge skill to process the work order in WorkOrders/${p}.md ` +
+      `(${t.items} item${t.items === 1 ? "" : "s"}, ${t.models} model${t.models === 1 ? "" : "s"}).`;
+    if (st.route === "A") s += ` Each item has a reference image in WorkOrders/${p}/refs/; look at it before building.`;
+    s += ` Deliver into Assets/${p}/.`;
+    if (t.models >= BIG_ORDER) {
+      s += " This is a large order: group the items into archetypes, build one parametric generator per archetype," +
+        " show me a 25-thumbnail review grid per archetype before mass-producing variants, and keep" +
+        ` Workbench/${p}/PROGRESS.md up to date so a fresh session can continue where this one stops.`;
+    } else {
+      s += " Show me the preview sheets when done.";
+    }
+    return s;
+  }
+
+  function warnings(st) {
+    const w = [];
+    if (!projectSlug(st.project)) w.push("Set a project name: it names the order file and the Assets folder.");
+    const items = usedItems(st);
+    if (!items.length) w.push("Add at least one item.");
+    if (st.route === "A") {
+      const missing = items.filter(it => !refOf(it)).length;
+      if (missing) w.push(`Route A: ${missing} item(s) have no reference image filename.`);
+    }
+    const names = items.map(itemName);
+    const dup = names.filter((n, i) => names.indexOf(n) !== i);
+    if (dup.length) w.push(`Duplicate item names: ${[...new Set(dup)].join(", ")}.`);
+    if (st.sprites && !(parseInt(st.spriteSize, 10) > 0)) w.push("Sprite size must be a positive number.");
+    return w;
+  }
+
+  function itemsFromFilenames(text) {
+    return String(text || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(f => {
+      const file = f.replace(/^.*[\\/]/, "");
+      return { name: slug(file), desc: "", qty: 1, ref: file, notes: "" };
+    });
+  }
+
+  function merge(saved) {
+    const d = defaults();
+    if (!saved || typeof saved !== "object") return d;
+    const st = Object.assign(d, saved);
+    st.views = Array.isArray(st.views) ? st.views.filter(v => VIEWS.includes(v)) : ["right"];
+    st.items = Array.isArray(st.items) && st.items.length ? st.items.map(it => Object.assign(blankItem(), it)) : [blankItem()];
+    return st;
+  }
+
+  return { VIEWS, defaults, blankItem, slug, projectSlug, headerBlock, itemTable, orderMarkdown, snippets,
+           prompt, warnings, totals, itemsFromFilenames, merge, facingOf };
+})();
+if (typeof module !== "undefined") module.exports = OrderLogic;
+</script>
+
+<script>
+(() => {
+  const L = OrderLogic;
+  const KEY = "assetForgeOrderForm.v1";
+  const $ = id => document.getElementById(id);
+
+  function load() {
+    try { return L.merge(JSON.parse(localStorage.getItem(KEY) || "null")); } catch (e) { return L.defaults(); }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* private mode / blocked storage */ }
+  }
+
+  let st = load();
+  const fields = ["project", "engine", "facing", "surface", "texture", "detail", "palette", "spriteSize",
+                  "outline", "sameScale", "rotations", "orderNotes"];
+
+  // views checkboxes
+  $("views").innerHTML = L.VIEWS.map(v => `<label><input type="checkbox" value="${v}"> ${v}</label>`).join("");
+
+  function writeGlobals() {
+    fields.forEach(f => { $(f).value = st[f]; });
+    $("glb").checked = !!st.glb;
+    $("sprites").checked = !!st.sprites;
+    $("views").querySelectorAll("input").forEach(cb => { cb.checked = st.views.includes(cb.value); });
+  }
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+  function renderItems() {
+    $("items").innerHTML = st.items.map((it, i) => `
+      <div class="item" data-i="${i}">
+        <div class="item-head"><span>Item ${i + 1}</span>
+          <span class="tools"><button type="button" data-act="up" title="Move up">&uarr;</button><button type="button" data-act="down" title="Move down">&darr;</button><button type="button" data-act="dup" title="Duplicate">copy</button><button type="button" data-act="del" title="Remove">&times;</button></span></div>
+        <div class="item-grid">
+          <label class="f">Name<input type="text" data-k="name" value="${esc(it.name)}" placeholder="scout_buggy"></label>
+          <label class="f">Qty / variants<input type="number" min="1" data-k="qty" value="${esc(it.qty)}"></label>
+          <label class="f">Reference image<input type="text" data-k="ref" value="${esc(it.ref)}" placeholder="${st.route === "A" ? "required: buggy.jpg" : "optional"}"></label>
+          <label class="f wide">Description<textarea data-k="desc" rows="2" placeholder="two-seat desert buggy with roll cage and big rear wheels">${esc(it.desc)}</textarea></label>
+          <label class="f wide">Notes (sizes, must-have parts, groups to animate; per-item overrides like surface=flat)<input type="text" data-k="notes" value="${esc(it.notes)}"></label>
+        </div>
+      </div>`).join("");
+  }
+
+  function renderOutputs() {
+    const p = L.projectSlug(st.project) || "<project>";
+    $("facingWrap").classList.toggle("dis", st.engine !== "other");
+    $("textureWrap").classList.toggle("dis", st.surface === "flat");
+    $("spriteBox").classList.toggle("dis", !st.sprites);
+    $("routeA").setAttribute("aria-selected", st.route === "A");
+    $("routeB").setAttribute("aria-selected", st.route === "B");
+    $("importBox").style.display = st.route === "A" ? "" : "none";
+    $("routeHint").textContent = st.route === "A"
+      ? "Every item gets a reference image. Put the images in the refs folder; Claude matches silhouette, palette and vibe (not exact shapes)."
+      : "Describe each item in words. Reference images are optional. Use the snippets to extend a list file you already keep.";
+    $("refsPath").textContent = `WorkOrders/${p}/refs/`;
+    $("orderPath").textContent = `WorkOrders/${p}.md`;
+    const t = L.totals(st);
+    $("itemStat").textContent = `${t.items} items, ${t.models} models`;
+    $("orderOut").textContent = L.orderMarkdown(st);
+    $("snippetOut").textContent = L.snippets(st) || "(no items yet)";
+    $("promptOut").textContent = L.prompt(st);
+    $("warnings").innerHTML = L.warnings(st).map(w => `<div class="warn">${esc(w)}</div>`).join("");
+  }
+
+  function update() { save(); renderOutputs(); }
+
+  fields.forEach(f => $(f).addEventListener("input", () => { st[f] = $(f).value; update(); }));
+  $("glb").addEventListener("change", e => { st.glb = e.target.checked; update(); });
+  $("sprites").addEventListener("change", e => { st.sprites = e.target.checked; update(); });
+  $("views").addEventListener("change", () => {
+    st.views = [...$("views").querySelectorAll("input:checked")].map(cb => cb.value); update();
+  });
+  $("routeA").addEventListener("click", () => { st.route = "A"; renderItems(); update(); });
+  $("routeB").addEventListener("click", () => { st.route = "B"; renderItems(); update(); });
+
+  $("items").addEventListener("input", e => {
+    const k = e.target.dataset.k; if (!k) return;
+    const i = +e.target.closest(".item").dataset.i;
+    st.items[i][k] = e.target.value; update();
+  });
+  $("items").addEventListener("click", e => {
+    const act = e.target.dataset.act; if (!act) return;
+    const i = +e.target.closest(".item").dataset.i;
+    const it = st.items;
+    if (act === "del") { it.splice(i, 1); if (!it.length) it.push(L.blankItem()); }
+    if (act === "dup") it.splice(i + 1, 0, Object.assign({}, it[i]));
+    if (act === "up" && i > 0) [it[i - 1], it[i]] = [it[i], it[i - 1]];
+    if (act === "down" && i < it.length - 1) [it[i + 1], it[i]] = [it[i], it[i + 1]];
+    renderItems(); update();
+  });
+  $("addItem").addEventListener("click", () => { st.items.push(L.blankItem()); renderItems(); update(); });
+  $("clearItems").addEventListener("click", () => {
+    if (confirm("Remove all items? Global defaults are kept.")) { st.items = [L.blankItem()]; renderItems(); update(); }
+  });
+  $("resetAll").addEventListener("click", () => {
+    if (confirm("Reset all fields and items to the defaults?")) { st = L.defaults(); writeGlobals(); renderItems(); update(); }
+  });
+  $("importBtn").addEventListener("click", () => {
+    const add = L.itemsFromFilenames($("filenames").value);
+    if (!add.length) return;
+    const blank = st.items.length === 1 && !st.items[0].name && !st.items[0].desc && !st.items[0].ref;
+    st.items = (blank ? [] : st.items).concat(add);
+    $("filenames").value = ""; renderItems(); update();
+  });
+
+  function copyText(text, btn) {
+    const done = () => { const o = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = o; }, 1200); };
+    const fallback = () => {
+      const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch (e) { alert("Copy failed; select the text and press Ctrl+C."); }
+      ta.remove();
+    };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+  }
+  document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => copyText($(b.dataset.copy).textContent, b)));
+  $("downloadMd").addEventListener("click", () => {
+    const blob = new Blob([L.orderMarkdown(st)], { type: "text/markdown" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = `${L.projectSlug(st.project) || "work-order"}.md`;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+
+  writeGlobals(); renderItems(); renderOutputs();
+})();
+</script>
+</body>
+</html>

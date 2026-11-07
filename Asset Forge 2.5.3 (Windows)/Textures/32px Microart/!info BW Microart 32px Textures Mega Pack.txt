@@ -1,0 +1,66 @@
+Hello and welcome!
+
+This mega pack contains 1165 microsized seamlessly tiling textures with intentional grayscale style. They are all black & white so that they can be tinted with any color. Most textures are unique but some have smoother and a sharper variant. Those are not duplicates.
+
+Format: PNG images.
+Size: 32x32 pixels.
+Seamlessly tiling texture.
+
+How to use them:
+1. Apply them to 3D models, 3D terrain, and 2D surfaces as tiling textures.
+2. Use the game engine's native color tint function to recolor the textures with any color from the rainbow.
+
+This makes them highly versatile to create all kinds of neat visual appearances of terrain, models or surfaces. They can be used in their original black and white format too.
+
+Originally these were designed for any Low Poly artstyle driven projects that embrace the cool combo of pixel art + minimal 3D models there were common in the Playstation 1 and Nintendo 64 era. They have the benefit of being ultra lightweight, flexible and combinable to create all kinds of neat objects if combined with my Deluxe Primitives package.
+
+As an example: 
+1. cylinder primitive 3d model + wooden texture + brown tint.
+2. cone 3D model + leafy spruce texture + forest green tint.
+3. combine them in the scene and you get a low poly spruce tree!
+
+The potential and possibilities of microart textures + primitive 3D models are endless!
+
+--
+
+HTML/CSS TUTORIAL - Applying tint to these on websites:
+
+HTML:
+<div class="tinted-image">
+  <img src="your-image.jpg"/> /* Your microart texture goes here */
+</div>
+
+CSS:
+.tinted-image {
+  position: relative;
+  display: inline-block;
+}
+
+.tinted-image::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.5); /* Use your desired tint color and opacity */
+  background-blend-mode: color; /* Use your desired blending mode: color, overlay, multiply or screen. */
+}
+
+.tinted-image img {
+  display: block;
+}
+
+With this method you can color tint them on your websites too!
+
+--
+
+License:
+
+CC-BY 4.0
+Reactorcore
+http://www.reactorcoregames.com
+
+This work © 2024 by Reactorcore is licensed under CC BY 4.0. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/
+
+(It means you can use them anywhere, even commercially. You only need to mention me (Reactorcore) and my website in the credits.)

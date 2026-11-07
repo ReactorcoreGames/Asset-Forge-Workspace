@@ -1,0 +1,25 @@
+# RC_Primitives materials (neutral defaults, recolour per model)
+
+newmtl base
+Ns 0
+Ka 0 0 0
+Kd 0.8157 0.8157 0.8157
+Ks 0 0 0
+d 1
+illum 1
+
+newmtl inner
+Ns 0
+Ka 0 0 0
+Kd 0.4392 0.4392 0.4392
+Ks 0 0 0
+d 1
+illum 1
+
+newmtl ground
+Ns 0
+Ka 0 0 0
+Kd 0.6275 0.6275 0.6275
+Ks 0 0 0
+d 1
+illum 1
